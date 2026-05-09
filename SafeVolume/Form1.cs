@@ -15,6 +15,7 @@ namespace SafeVolume
         private float volumeCap = 0.3f;
         private bool isEnabled = false;
         private bool allowExit = false;
+        private DateTime lastNotificationTime = DateTime.MinValue;
 
         public Form1()
         {
@@ -71,9 +72,14 @@ namespace SafeVolume
                 device.AudioEndpointVolume.MasterVolumeLevelScalar = volumeCap;
 
                 //  SHOW NOTIFICATION
-                notifyIcon1.BalloonTipTitle = "SafeVolume";
-                notifyIcon1.BalloonTipText = $"Volume capped to {(int)(volumeCap * 100)}%";
-                notifyIcon1.ShowBalloonTip(2000);
+                if ((DateTime.Now - lastNotificationTime).TotalSeconds > 3)
+                {
+                    notifyIcon1.BalloonTipTitle = "SafeVolume";
+                    notifyIcon1.BalloonTipText = $"Volume capped to {(int)(volumeCap * 100)}%";
+                    notifyIcon1.ShowBalloonTip(2000);
+
+                    lastNotificationTime = DateTime.Now;
+                }
             }
         }
 
