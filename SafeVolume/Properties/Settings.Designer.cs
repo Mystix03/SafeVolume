@@ -46,5 +46,27 @@ namespace SafeVolume.Properties {
                 this["IsEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection KnownDevices {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["KnownDevices"]));
+            }
+            set {
+                this["KnownDevices"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection ProtectedDevices {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["ProtectedDevices"]));
+            }
+            set {
+                this["ProtectedDevices"] = value;
+            }
+        }
     }
 }

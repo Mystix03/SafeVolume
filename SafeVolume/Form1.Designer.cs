@@ -38,6 +38,7 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             showToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
+            btnDevices = new Button();
             ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
@@ -112,11 +113,22 @@
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
+            // btnDevices
+            // 
+            btnDevices.Location = new Point(421, 106);
+            btnDevices.Name = "btnDevices";
+            btnDevices.Size = new Size(143, 34);
+            btnDevices.TabIndex = 4;
+            btnDevices.Text = "View Devices";
+            btnDevices.UseVisualStyleBackColor = true;
+            btnDevices.Click += btnDevices_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(400, 296);
+            ClientSize = new Size(588, 395);
+            Controls.Add(btnDevices);
             Controls.Add(checkBoxStartup);
             Controls.Add(trackBarVolume);
             Controls.Add(labelVolume);
@@ -139,5 +151,6 @@
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem showToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
+        private Button btnDevices;
     }
 }

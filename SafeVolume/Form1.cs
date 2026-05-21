@@ -1,11 +1,9 @@
 using System;
 using System.Windows.Forms;
+using System.Collections.Specialized;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using Microsoft.Win32;
-
-
-
 
 namespace SafeVolume
 {
@@ -15,37 +13,40 @@ namespace SafeVolume
         private float volumeCap = 0.3f;
         private bool isEnabled = false;
         private bool allowExit = false;
-        private DateTime lastNotificationTime = DateTime.MinValue;
+
+        // Anti-spam mechanics
+        private System.Windows.Forms.Timer notificationTimer;
+        private string pendingNotificationDevice = "";
+        private readonly object notificationLock = new object();
 
         public Form1()
         {
             InitializeComponent();
-            // Load saved settings
+
             volumeCap = Properties.Settings.Default.VolumeCap;
             isEnabled = Properties.Settings.Default.IsEnabled;
 
-            // Apply to UI
             trackBarVolume.Value = (int)(volumeCap * 100);
             checkBoxEnable.Checked = isEnabled;
-
             labelVolume.Text = $"Volume Cap: {trackBarVolume.Value}%";
 
-            // Sync startup checkbox with registry
             string appName = "SafeVolume";
-
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run", false);
-
-            if (key != null && key.GetValue(appName) != null)
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false))
             {
-                checkBoxStartup.Checked = true;
-                key.Close();
+                if (key != null && key.GetValue(appName) != null)
+                {
+                    checkBoxStartup.Checked = true;
+                }
             }
+
+            // Set up the debounce timer (waits 1 second for audio signals to settle)
+            notificationTimer = new System.Windows.Forms.Timer();
+            notificationTimer.Interval = 1000;
+            notificationTimer.Tick += NotificationTimer_Tick;
 
             enumerator = new MMDeviceEnumerator();
             enumerator.RegisterEndpointNotificationCallback(this);
 
-            
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
             this.Hide();
@@ -56,34 +57,82 @@ namespace SafeVolume
         {
             if (!allowExit)
             {
-                e.Cancel = true;   // block normal close
-                this.Hide();       // hide instead
+                e.Cancel = true;
+                this.Hide();
             }
         }
 
-
-
+        private void btnDevices_Click(object sender, EventArgs e)
+        {
+            using (FormDevices devicesWindow = new FormDevices())
+            {
+                devicesWindow.ShowDialog(this);
+            }
+        }
 
         public void OnDefaultDeviceChanged(DataFlow flow, Role role, string defaultDeviceId)
         {
-            if (flow == DataFlow.Render && isEnabled)
+            if (flow == DataFlow.Render)
             {
                 var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-                device.AudioEndpointVolume.MasterVolumeLevelScalar = volumeCap;
+                string currentDeviceName = device.FriendlyName;
 
-                //  SHOW NOTIFICATION
-                if ((DateTime.Now - lastNotificationTime).TotalSeconds > 3)
+                System.Console.WriteLine($"Device Connected: {device.ID} | Name: {currentDeviceName}");
+
+                if (Properties.Settings.Default.KnownDevices == null)
+                    Properties.Settings.Default.KnownDevices = new StringCollection();
+
+                if (!Properties.Settings.Default.KnownDevices.Contains(currentDeviceName))
                 {
-                    notifyIcon1.BalloonTipTitle = "SafeVolume";
-                    notifyIcon1.BalloonTipText = $"Volume capped to {(int)(volumeCap * 100)}%";
-                    notifyIcon1.ShowBalloonTip(2000);
+                    Properties.Settings.Default.KnownDevices.Add(currentDeviceName);
+                    Properties.Settings.Default.Save();
+                }
 
-                    lastNotificationTime = DateTime.Now;
+                if (isEnabled)
+                {
+                    var protectedDevs = Properties.Settings.Default.ProtectedDevices;
+
+                    if (protectedDevs != null && protectedDevs.Contains(currentDeviceName))
+                    {
+                        // Instantly force the volume cap down silently
+                        device.AudioEndpointVolume.MasterVolumeLevelScalar = volumeCap;
+
+                        // Thread-safe notification staging
+                        lock (notificationLock)
+                        {
+                            pendingNotificationDevice = currentDeviceName;
+
+                            if (this.IsHandleCreated && !this.IsDisposed)
+                            {
+                                this.BeginInvoke((MethodInvoker)delegate
+                                {
+                                    // Restart the timer every time Windows spam-fires an event.
+                                    // This delays the popup until the absolute LAST event passes.
+                                    notificationTimer.Stop();
+                                    notificationTimer.Start();
+                                });
+                            }
+                        }
+                    }
                 }
             }
         }
 
-        // Required empty methods
+        // Fires exactly ONCE, 1 second after Windows finishes bouncing connection events
+        private void NotificationTimer_Tick(object sender, EventArgs e)
+        {
+            notificationTimer.Stop(); // Stand down until next device swap
+
+            if (!string.IsNullOrEmpty(pendingNotificationDevice))
+            {
+                notifyIcon1.BalloonTipTitle = "SafeVolume Active";
+                notifyIcon1.BalloonTipText = $"Capped {pendingNotificationDevice} to {(int)(volumeCap * 100)}%";
+                notifyIcon1.ShowBalloonTip(2000);
+
+                pendingNotificationDevice = ""; // Reset
+            }
+        }
+
         public void OnDeviceAdded(string pwstrDeviceId) { }
         public void OnDeviceRemoved(string deviceId) { }
         public void OnDeviceStateChanged(string deviceId, DeviceState newState) { }
@@ -92,8 +141,6 @@ namespace SafeVolume
         private void checkBoxEnable_CheckedChanged(object sender, EventArgs e)
         {
             isEnabled = checkBoxEnable.Checked;
-
-            //  SAVE
             Properties.Settings.Default.IsEnabled = isEnabled;
             Properties.Settings.Default.Save();
         }
@@ -102,10 +149,8 @@ namespace SafeVolume
         {
             int value = trackBarVolume.Value;
             volumeCap = value / 100f;
-
             labelVolume.Text = $"Volume Cap: {value}%";
 
-            //  SAVE
             Properties.Settings.Default.VolumeCap = volumeCap;
             Properties.Settings.Default.Save();
         }
@@ -115,34 +160,24 @@ namespace SafeVolume
             string appName = "SafeVolume";
             string exePath = Application.ExecutablePath;
 
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(
-                @"Software\Microsoft\Windows\CurrentVersion\Run", true);
-
-
-            if (key == null) return;
-            if (checkBoxStartup.Checked)
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
             {
-                key.SetValue(appName, exePath);
+                if (key == null) return;
+                if (checkBoxStartup.Checked)
+                    key.SetValue(appName, exePath);
+                else
+                    key.DeleteValue(appName, false);
             }
-            else
-            {
-                key.DeleteValue(appName, false);
-            }
-            key.Close();
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e) => ShowForm();
+        private void showToolStripMenuItem_Click(object sender, EventArgs e) => ShowForm();
+
+        private void ShowForm()
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
             this.ShowInTaskbar = true;
-        }
-
-        private void showToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-    this.Show();
-    this.WindowState = FormWindowState.Normal;
-    this.ShowInTaskbar = true;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
