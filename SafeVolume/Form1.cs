@@ -13,6 +13,7 @@ namespace SafeVolume
         private float volumeCap = 0.3f;
         private bool isEnabled = false;
         private bool allowExit = false;
+        private bool allowShow = false;
 
         // Anti-spam mechanics
         private System.Windows.Forms.Timer notificationTimer;
@@ -47,10 +48,18 @@ namespace SafeVolume
             enumerator = new MMDeviceEnumerator();
             enumerator.RegisterEndpointNotificationCallback(this);
 
-            this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
-            this.Hide();
             this.Text = "SafeVolume";
+        }
+
+        protected override void SetVisibleCore(bool value)
+        {
+            if (!allowShow && !IsHandleCreated)
+            {
+                this.CreateHandle();
+                value = false;
+            }
+            base.SetVisibleCore(value);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -58,6 +67,7 @@ namespace SafeVolume
             if (!allowExit)
             {
                 e.Cancel = true;
+                this.ShowInTaskbar = false;
                 this.Hide();
             }
         }
@@ -175,9 +185,11 @@ namespace SafeVolume
 
         private void ShowForm()
         {
+            allowShow = true;
+            this.ShowInTaskbar = true;
             this.Show();
             this.WindowState = FormWindowState.Normal;
-            this.ShowInTaskbar = true;
+            this.Activate();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
