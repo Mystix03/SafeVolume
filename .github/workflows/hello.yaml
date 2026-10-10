@@ -26,4 +26,14 @@ jobs:
         run: dotnet restore SafeVolume.sln
 
       - name: Build application
-        run: dotnet build SafeVolume.sln --configuration Release --no-restore
+        run: dotnet build SafeVolume.sln --configuration Release --no-rest
+
+
+        
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: SafeVolume-build
+          path: SafeVolume/bin/Release/
+          if-no-files-found: error
+          retention-days: 7
