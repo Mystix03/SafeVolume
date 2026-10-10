@@ -1,4 +1,4 @@
-﻿namespace SafeVolume
+namespace SafeVolume
 {
     partial class Form1
     {
@@ -34,11 +34,11 @@
             labelVolume = new Label();
             trackBarVolume = new TrackBar();
             checkBoxStartup = new CheckBox();
+            btnDevices = new Button();
             notifyIcon1 = new NotifyIcon(components);
             contextMenuStrip1 = new ContextMenuStrip(components);
             showToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
-            btnDevices = new Button();
             ((System.ComponentModel.ISupportInitialize)trackBarVolume).BeginInit();
             contextMenuStrip1.SuspendLayout();
             SuspendLayout();
@@ -46,9 +46,10 @@
             // checkBoxEnable
             // 
             checkBoxEnable.AutoSize = true;
-            checkBoxEnable.Location = new Point(133, 52);
+            checkBoxEnable.Font = new Font("Segoe UI", 9.5F);
+            checkBoxEnable.Location = new Point(32, 28);
             checkBoxEnable.Name = "checkBoxEnable";
-            checkBoxEnable.Size = new Size(176, 29);
+            checkBoxEnable.Size = new Size(183, 30);
             checkBoxEnable.TabIndex = 0;
             checkBoxEnable.Text = "Enable Protection";
             checkBoxEnable.UseVisualStyleBackColor = true;
@@ -57,29 +58,42 @@
             // labelVolume
             // 
             labelVolume.AutoSize = true;
-            labelVolume.Location = new Point(133, 210);
+            labelVolume.Font = new Font("Segoe UI", 9.5F);
+            labelVolume.Location = new Point(32, 75);
             labelVolume.Name = "labelVolume";
-            labelVolume.Size = new Size(152, 25);
+            labelVolume.Size = new Size(157, 25);
             labelVolume.TabIndex = 1;
             labelVolume.Text = "Volume Cap: 30%";
             // 
             // trackBarVolume
             // 
-            trackBarVolume.Location = new Point(133, 122);
+            trackBarVolume.Location = new Point(24, 108);
             trackBarVolume.Maximum = 100;
             trackBarVolume.Name = "trackBarVolume";
-            trackBarVolume.Size = new Size(156, 69);
+            trackBarVolume.Size = new Size(330, 69);
             trackBarVolume.TabIndex = 2;
             trackBarVolume.Value = 30;
             trackBarVolume.Scroll += trackBarVolume_Scroll;
             // 
+            // btnDevices
+            // 
+            btnDevices.Font = new Font("Segoe UI", 9F);
+            btnDevices.Location = new Point(32, 175);
+            btnDevices.Name = "btnDevices";
+            btnDevices.Size = new Size(314, 36);
+            btnDevices.TabIndex = 3;
+            btnDevices.Text = "Manage Devices...";
+            btnDevices.UseVisualStyleBackColor = true;
+            btnDevices.Click += btnDevices_Click;
+            // 
             // checkBoxStartup
             // 
             checkBoxStartup.AutoSize = true;
-            checkBoxStartup.Location = new Point(197, 266);
+            checkBoxStartup.Font = new Font("Segoe UI", 9F);
+            checkBoxStartup.Location = new Point(32, 225);
             checkBoxStartup.Name = "checkBoxStartup";
             checkBoxStartup.Size = new Size(191, 29);
-            checkBoxStartup.TabIndex = 3;
+            checkBoxStartup.TabIndex = 4;
             checkBoxStartup.Text = "Start with Windows";
             checkBoxStartup.UseVisualStyleBackColor = true;
             checkBoxStartup.CheckedChanged += checkBoxStartup_CheckedChanged;
@@ -88,7 +102,7 @@
             // 
             notifyIcon1.ContextMenuStrip = contextMenuStrip1;
             notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
-            notifyIcon1.Text = "SafeVolume running";
+            notifyIcon1.Text = "SafeVolume";
             notifyIcon1.Visible = true;
             notifyIcon1.MouseDoubleClick += notifyIcon1_MouseDoubleClick;
             // 
@@ -113,28 +127,21 @@
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
-            // btnDevices
-            // 
-            btnDevices.Location = new Point(421, 106);
-            btnDevices.Name = "btnDevices";
-            btnDevices.Size = new Size(143, 34);
-            btnDevices.TabIndex = 4;
-            btnDevices.Text = "View Devices";
-            btnDevices.UseVisualStyleBackColor = true;
-            btnDevices.Click += btnDevices_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(588, 395);
-            Controls.Add(btnDevices);
+            ClientSize = new Size(380, 280);
             Controls.Add(checkBoxStartup);
+            Controls.Add(btnDevices);
             Controls.Add(trackBarVolume);
             Controls.Add(labelVolume);
             Controls.Add(checkBoxEnable);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "Form1";
-            Text = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "SafeVolume";
             ((System.ComponentModel.ISupportInitialize)trackBarVolume).EndInit();
             contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
@@ -147,10 +154,11 @@
         private Label labelVolume;
         private TrackBar trackBarVolume;
         private CheckBox checkBoxStartup;
+        private Button btnDevices;
         private NotifyIcon notifyIcon1;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem showToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
-        private Button btnDevices;
     }
 }
+

@@ -9,6 +9,14 @@ namespace SafeVolume
 {
     public partial class Form1 : Form, IMMNotificationClient
     {
+        [System.Runtime.InteropServices.DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool SetProcessWorkingSetSize(IntPtr proc, int min, int max);
+
+        private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+
         private MMDeviceEnumerator enumerator;
         private float volumeCap = 0.3f;
         private bool isEnabled = false;
@@ -50,6 +58,32 @@ namespace SafeVolume
 
             this.ShowInTaskbar = false;
             this.Text = "SafeVolume";
+
+            EnableDarkMode();
+            this.HandleCreated += (s, e) => CompactMemory();
+        }
+
+        private void EnableDarkMode()
+        {
+            try
+            {
+                int darkMode = 1;
+                DwmSetWindowAttribute(this.Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref darkMode, sizeof(int));
+            }
+            catch { }
+        }
+
+        private static void CompactMemory()
+        {
+            try
+            {
+                System.Runtime.GCSettings.LargeObjectHeapCompactionMode = System.Runtime.GCLargeObjectHeapCompactionMode.CompactOnce;
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+                SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
+            }
+            catch { }
         }
 
         protected override void SetVisibleCore(bool value)
@@ -69,6 +103,7 @@ namespace SafeVolume
                 e.Cancel = true;
                 this.ShowInTaskbar = false;
                 this.Hide();
+                CompactMemory();
             }
         }
 

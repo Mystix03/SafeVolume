@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 
@@ -10,7 +10,6 @@ namespace SafeVolume
 
         public FormDevices()
         {
-            
             InitializeCustomUI();
             LoadStoredDevicesUI();
         }
