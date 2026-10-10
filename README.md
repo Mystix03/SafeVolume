@@ -1,16 +1,16 @@
-# SafeVolume 🔊
+# SafeVolume 
 
 A lightweight Windows utility that prevents sudden volume spikes when connecting headphones or Bluetooth audio devices.
 
 ---
 
-## 🚨 Problem
+##  Problem
 
 On Windows, connecting headphones or switching audio devices can sometimes reset the volume to a very high level, causing sudden loud audio and potential hearing damage.
 
 ---
 
-## ✅ Solution
+##  Solution
 
 SafeVolume automatically detects audio device changes and caps the volume to a safe level instantly.
 
@@ -18,16 +18,16 @@ SafeVolume automatically detects audio device changes and caps the volume to a s
 
 ## ✨ Features
 
-- 🔒 Automatic volume limiting on device change  
-- 🎧 Works with Bluetooth and wired headphones  
-- 🖥️ Runs in system tray (background)  
-- ⚡ Start with Windows option  
-- 💾 Remembers your settings  
-- 🔔 Notification when volume is capped  
+-  Automatic volume limiting on device change  
+-  Works with Bluetooth and wired headphones  
+-  Runs in system tray (background)  
+-  Start with Windows option  
+-  Remembers your settings  
+-  Notification when volume is capped  
 
 ---
 
-## 🛠️ How it works
+##  How it works
 
 - Monitors default audio device changes  
 - Instantly sets system volume to user-defined limit  
@@ -35,7 +35,7 @@ SafeVolume automatically detects audio device changes and caps the volume to a s
 
 ---
 
-## 🚀 Usage
+##  Usage
 
 1. Run `SafeVolume.exe`  
 2. Enable protection  
@@ -54,9 +54,9 @@ No installation required.
 
 ---
 
-## 🧱 Build Instructions
+##  Build Instructions
 
-### 🔹 Requirements
+###  Requirements
 
 - Windows 10 / 11  
 - Visual Studio 2022 (with .NET desktop development)  
@@ -64,7 +64,7 @@ No installation required.
 
 ---
 
-### 🔹 Steps to Build
+###  Steps to Build
 
 1. Clone the repository:
 
@@ -109,6 +109,6 @@ bin/Release/net8.0-windows/publish/win-x64/
 ⚠️ Note
 Keep all files in the release folder together
 Designed for Windows 10/11
-💡 Motivation
+ Motivation
 
 This tool was built to solve a common issue discussed across forums and Reddit where users experience sudden loud audio when connecting headphones.
