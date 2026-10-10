@@ -26,10 +26,8 @@ jobs:
         run: dotnet restore SafeVolume.sln
 
       - name: Build application
-        run: dotnet build SafeVolume.sln --configuration Release --no-rest
+        run: dotnet build SafeVolume.sln --configuration Release --no-restore
 
-
-        
       - name: Upload build output
         uses: actions/upload-artifact@v4
         with:
