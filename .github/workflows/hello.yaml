@@ -1,17 +1,29 @@
 
-name: My First Workflow
+name: SafeVolume CI
 
 on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  hello:
-    runs-on: ubuntu-latest
+  build:
+    name: Build SafeVolume
+    runs-on: windows-latest
 
     steps:
-      - name: Say hello
-        run: echo "Hello from GitHub Actions!"
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
+      - name: Restore dependencies
+        run: dotnet restore SafeVolume.sln
 
+      - name: Build application
+        run: dotnet build SafeVolume.sln --configuration Release --no-restore
