@@ -17,10 +17,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up .NET
+      - name: Set up .NET with NuGet caching
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: SafeVolume/SafeVolume.csproj
 
       - name: Restore dependencies
         run: dotnet restore SafeVolume.sln
