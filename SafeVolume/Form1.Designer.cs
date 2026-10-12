@@ -49,7 +49,7 @@ namespace SafeVolume
             checkBoxEnable.Font = new Font("Segoe UI", 9.5F);
             checkBoxEnable.Location = new Point(32, 28);
             checkBoxEnable.Name = "checkBoxEnable";
-            checkBoxEnable.Size = new Size(183, 30);
+            checkBoxEnable.Size = new Size(187, 29);
             checkBoxEnable.TabIndex = 0;
             checkBoxEnable.Text = "Enable Protection";
             checkBoxEnable.UseVisualStyleBackColor = true;
@@ -61,7 +61,7 @@ namespace SafeVolume
             labelVolume.Font = new Font("Segoe UI", 9.5F);
             labelVolume.Location = new Point(32, 75);
             labelVolume.Name = "labelVolume";
-            labelVolume.Size = new Size(157, 25);
+            labelVolume.Size = new Size(159, 25);
             labelVolume.TabIndex = 1;
             labelVolume.Text = "Volume Cap: 30%";
             // 
@@ -75,17 +75,6 @@ namespace SafeVolume
             trackBarVolume.Value = 30;
             trackBarVolume.Scroll += trackBarVolume_Scroll;
             // 
-            // btnDevices
-            // 
-            btnDevices.Font = new Font("Segoe UI", 9F);
-            btnDevices.Location = new Point(32, 175);
-            btnDevices.Name = "btnDevices";
-            btnDevices.Size = new Size(314, 36);
-            btnDevices.TabIndex = 3;
-            btnDevices.Text = "Manage Devices...";
-            btnDevices.UseVisualStyleBackColor = true;
-            btnDevices.Click += btnDevices_Click;
-            // 
             // checkBoxStartup
             // 
             checkBoxStartup.AutoSize = true;
@@ -97,6 +86,17 @@ namespace SafeVolume
             checkBoxStartup.Text = "Start with Windows";
             checkBoxStartup.UseVisualStyleBackColor = true;
             checkBoxStartup.CheckedChanged += checkBoxStartup_CheckedChanged;
+            // 
+            // btnDevices
+            // 
+            btnDevices.Font = new Font("Segoe UI", 9F);
+            btnDevices.Location = new Point(32, 175);
+            btnDevices.Name = "btnDevices";
+            btnDevices.Size = new Size(314, 36);
+            btnDevices.TabIndex = 3;
+            btnDevices.Text = "Manage Devices...";
+            btnDevices.UseVisualStyleBackColor = true;
+            btnDevices.Click += btnDevices_Click;
             // 
             // notifyIcon1
             // 
@@ -138,6 +138,7 @@ namespace SafeVolume
             Controls.Add(labelVolume);
             Controls.Add(checkBoxEnable);
             FormBorderStyle = FormBorderStyle.FixedSingle;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
