@@ -88,10 +88,10 @@ namespace SafeVolume
 
         protected override void SetVisibleCore(bool value)
         {
-            if (!allowShow && !IsHandleCreated)
+            if (!allowShow)
             {
-                this.CreateHandle();
                 value = false;
+                if (!IsHandleCreated) CreateHandle();
             }
             base.SetVisibleCore(value);
         }
